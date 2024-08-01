@@ -7,11 +7,14 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        beige: '#beb7a4',
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-        "gradient-text": "linear-gradient(to right, #EB568E, #144EE3)"
+        "text-gradient": "linear-gradient(to right, #fffffc, #beb7a4)",
       },
     },
   },
