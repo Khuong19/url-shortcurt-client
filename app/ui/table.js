@@ -1,58 +1,28 @@
 'use client';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import axios from 'axios';
 import { ConfigProvider, Space, Table, Tag, Input, Button } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 
-const data = [
-  {
-    key: '1',
-    shortLink: 'https://short.ly/abc123',
-    originalLink: 'https://www.example.com',
-    status: true,  // active
-    date: '2024-07-29',
-  },
-  {
-    key: '2',
-    shortLink: 'https://short.ly/def456',
-    originalLink: 'https://www.example.org',
-    status: false, // inactive
-    date: '2024-07-28',
-  },
-  {
-    key: '3',
-    shortLink: 'https://short.ly/ghi789',
-    originalLink: 'https://www.example.net',
-    status: true,  // active
-    date: '2024-07-27',
-  },
-  {
-    key: '4',
-    shortLink: 'https://short.ly/jkl012',
-    originalLink: 'https://www.example.co.uk',
-    status: false, // inactive
-    date: '2024-07-26',
-  },
-  {
-    key: '5',
-    shortLink: 'https://short.ly/mno345',
-    originalLink: 'https://www.example.edu',
-    status: true,  // active
-    date: '2024-07-25',
-  },
-  {
-    key: '6',
-    shortLink: 'https://short.ly/pqr678',
-    originalLink: 'https://www.example.gov',
-    status: false, // inactive
-    date: '2024-07-24',
-  },
-];
-
 const TableData = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
+
+  useEffect(() => {
+    axios.get('/api/data-endpoint') // Replace with your API endpoint
+      .then(response => {
+        setData(response.data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the data!", error);
+        setLoading(false);
+      });
+  }, []);
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -73,10 +43,7 @@ const TableData = () => {
       clearFilters,
       close,
     }) => (
-      <div
-        style={{ padding: 8 }}
-        onKeyDown={(e) => e.stopPropagation()}
-      >
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
@@ -108,9 +75,7 @@ const TableData = () => {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined
-        style={{ color: filtered ? '#1677ff' : undefined }}
-      />
+      <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />
     ),
     onFilter: (value, record) =>
       record[dataIndex]?.toString().toLowerCase().includes(value.toLowerCase()),
@@ -179,6 +144,7 @@ const TableData = () => {
     <Table
       columns={columns}
       dataSource={data}
+      loading={loading}
       pagination={{ pageSize: 5 }}
       className="custom-table"
       rowHoverable={false}
